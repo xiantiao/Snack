@@ -402,18 +402,23 @@ export const useGameLogic = (gridSize: { width: number; height: number }) => {
       
       switch (e.key) {
         case 'ArrowUp':
+          e.preventDefault(); // 阻止上键的默认滚动行为
           changeDirection('UP');
           break;
         case 'ArrowDown':
+          e.preventDefault(); // 阻止下键的默认滚动行为
           changeDirection('DOWN');
           break;
         case 'ArrowLeft':
+          e.preventDefault(); // 阻止左键的默认滚动行为
           changeDirection('LEFT');
           break;
         case 'ArrowRight':
+          e.preventDefault(); // 阻止右键的默认滚动行为
           changeDirection('RIGHT');
           break;
         case ' ':
+          e.preventDefault(); // 阻止空格键的默认行为
           pauseGame();
           break;
         default:
