@@ -5,6 +5,7 @@ import MainMenu from '../components/MainMenu';
 import GameScreen from '../components/GameScreen';
 import GameSettings from '../components/GameSettings';
 import Scoreboard from '../components/Scoreboard';
+import GameInstructions from '../components/GameInstructions';
 import { useGameLogic } from '../hooks/useGameLogic';
 import { useHighScores, useGameSettings } from '../hooks/useLocalStorage';
 import type { GameStatus } from '../types/game';
@@ -17,11 +18,11 @@ export default function Home() {
   const { gameState, startGame, pauseGame, resetGame, changeDirection, updateSettings: updateGameSettings } = useGameLogic(gridSize);
   
   // 本地存储钩子
-  const { highScores, addHighScore, clearHighScores } = useHighScores();
+  const { highScores, addHighScore, clearHighScores, resetAllData } = useHighScores();
   const { settings, updateSettings } = useGameSettings();
   
   // 界面状态
-  const [currentScreen, setCurrentScreen] = useState<'MENU' | 'GAME' | 'SETTINGS' | 'SCOREBOARD'>('MENU');
+  const [currentScreen, setCurrentScreen] = useState<'MENU' | 'GAME' | 'SETTINGS' | 'SCOREBOARD' | 'INSTRUCTIONS'>('MENU');
   
   // 用于跟踪游戏结束状态，避免多次记录分数
   const gameOverProcessedRef = useRef(false);
@@ -77,6 +78,11 @@ export default function Home() {
     setCurrentScreen('SCOREBOARD');
   };
   
+  // 处理打开游戏说明
+  const handleOpenInstructions = () => {
+    setCurrentScreen('INSTRUCTIONS');
+  };
+  
   // 处理关闭弹窗
   const handleCloseModal = () => {
     setCurrentScreen('MENU');
@@ -90,6 +96,13 @@ export default function Home() {
   // 处理清除排行榜
   const handleClearScoreboard = () => {
     clearHighScores();
+  };
+  
+  // 处理重置所有数据
+  const handleResetAllData = () => {
+    if (window.confirm('确定要重置所有数据吗？这将清除所有测试数据和游戏记录。')) {
+      resetAllData();
+    }
   };
   
   // 渲染当前界面
@@ -123,6 +136,15 @@ export default function Home() {
               highScores={highScores}
               onClose={handleCloseModal}
               onClear={handleClearScoreboard}
+              onResetAll={handleResetAllData}
+            />
+          </div>
+        );
+      case 'INSTRUCTIONS':
+        return (
+          <div className="modal-container fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <GameInstructions 
+              onClose={handleCloseModal}
             />
           </div>
         );
@@ -133,6 +155,7 @@ export default function Home() {
             onStartGame={handleStartGame}
             onOpenSettings={handleOpenSettings}
             onOpenScoreboard={handleOpenScoreboard}
+            onOpenInstructions={handleOpenInstructions}
           />
         );
     }

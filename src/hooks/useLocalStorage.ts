@@ -1,25 +1,45 @@
 import { useState, useEffect, useCallback } from 'react';
 import { HighScore, GameSettings, Difficulty } from '../types/game';
 
+// 本地存储键名
+const HIGH_SCORES_KEY = 'snakeHighScores';
+const GAME_SETTINGS_KEY = 'snakeGameSettings';
+const INITIALIZED_KEY = 'snakeGameInitialized';
+
 // 保存最高分
 export const useHighScores = () => {
   const [highScores, setHighScores] = useState<HighScore[]>([]);
 
-  // 从本地存储加载最高分
-  useEffect(() => {
-    const storedScores = localStorage.getItem('snakeHighScores');
+  // 初始化函数 - 检查是否需要清除测试数据
+  const initializeStorage = useCallback(() => {
+    const isInitialized = localStorage.getItem(INITIALIZED_KEY);
+    
+    // 如果是第一次运行，清除可能存在的测试数据
+    if (!isInitialized) {
+      localStorage.removeItem(HIGH_SCORES_KEY);
+      localStorage.setItem(INITIALIZED_KEY, 'true');
+      return [];
+    }
+    
+    // 否则加载现有数据
+    const storedScores = localStorage.getItem(HIGH_SCORES_KEY);
     if (storedScores) {
       try {
-        setHighScores(JSON.parse(storedScores));
+        return JSON.parse(storedScores);
       } catch (error) {
         console.error('Failed to parse high scores:', error);
-        setHighScores([]);
+        return [];
       }
-    } else {
-      // 如果没有存储的分数，确保状态为空数组
-      setHighScores([]);
     }
+    
+    return [];
   }, []);
+
+  // 从本地存储加载最高分
+  useEffect(() => {
+    const scores = initializeStorage();
+    setHighScores(scores);
+  }, [initializeStorage]);
 
   // 添加新的最高分
   const addHighScore = useCallback((score: number) => {
@@ -41,7 +61,7 @@ export const useHighScores = () => {
         
         // 保存到本地存储
         try {
-          localStorage.setItem('snakeHighScores', JSON.stringify(updatedScores));
+          localStorage.setItem(HIGH_SCORES_KEY, JSON.stringify(updatedScores));
         } catch (storageError) {
           console.error('Failed to save high scores to localStorage:', storageError);
         }
@@ -55,11 +75,18 @@ export const useHighScores = () => {
 
   // 清除所有高分记录
   const clearHighScores = useCallback(() => {
-    localStorage.removeItem('snakeHighScores');
+    localStorage.removeItem(HIGH_SCORES_KEY);
     setHighScores([]);
   }, []);
 
-  return { highScores, addHighScore, clearHighScores };
+  // 重置所有数据（包括初始化标志）
+  const resetAllData = useCallback(() => {
+    localStorage.removeItem(HIGH_SCORES_KEY);
+    localStorage.removeItem(INITIALIZED_KEY);
+    setHighScores([]);
+  }, []);
+
+  return { highScores, addHighScore, clearHighScores, resetAllData };
 };
 
 // 保存游戏设置
@@ -73,7 +100,7 @@ export const useGameSettings = () => {
 
   // 从本地存储加载设置
   useEffect(() => {
-    const storedSettings = localStorage.getItem('snakeGameSettings');
+    const storedSettings = localStorage.getItem(GAME_SETTINGS_KEY);
     if (storedSettings) {
       try {
         setSettings(JSON.parse(storedSettings));
@@ -87,7 +114,7 @@ export const useGameSettings = () => {
   // 更新设置
   const updateSettings = (newSettings: GameSettings) => {
     setSettings(newSettings);
-    localStorage.setItem('snakeGameSettings', JSON.stringify(newSettings));
+    localStorage.setItem(GAME_SETTINGS_KEY, JSON.stringify(newSettings));
   };
 
   return { settings, updateSettings };

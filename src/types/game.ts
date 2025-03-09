@@ -10,7 +10,17 @@ export type Snake = {
   direction: Direction;
 };
 
-export type Food = Point;
+export type FoodType = 'NORMAL' | 'SPEED' | 'SLOW' | 'BONUS';
+
+export type Food = Point & {
+  type: FoodType;
+  value: number; // 食物的分数价值
+  effect?: {
+    type: 'SPEED' | 'SLOW' | 'GROW'; // 效果类型
+    duration: number; // 效果持续时间（毫秒）
+    factor: number; // 效果因子（如速度变化的倍数）
+  };
+};
 
 export type GameStatus = 'NOT_STARTED' | 'RUNNING' | 'PAUSED' | 'GAME_OVER';
 
@@ -31,6 +41,11 @@ export type GameState = {
     height: number;
   };
   settings: GameSettings;
+  activeEffects: Array<{
+    type: 'SPEED' | 'SLOW' | 'GROW';
+    endTime: number;
+    factor: number;
+  }>;
 };
 
 export type HighScore = {

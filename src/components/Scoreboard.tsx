@@ -5,9 +5,15 @@ interface ScoreboardProps {
   highScores: HighScore[];
   onClose: () => void;
   onClear?: () => void;
+  onResetAll?: () => void;
 }
 
-const Scoreboard: React.FC<ScoreboardProps> = ({ highScores, onClose, onClear }) => {
+const Scoreboard: React.FC<ScoreboardProps> = ({ 
+  highScores, 
+  onClose, 
+  onClear,
+  onResetAll
+}) => {
   // 格式化日期
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -86,6 +92,15 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ highScores, onClose, onClear })
             onClick={onClear}
           >
             清除所有记录
+          </button>
+        )}
+        
+        {onResetAll && (
+          <button
+            className="py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors"
+            onClick={onResetAll}
+          >
+            重置所有数据（清除测试数据）
           </button>
         )}
       </div>

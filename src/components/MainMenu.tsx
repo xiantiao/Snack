@@ -4,12 +4,14 @@ interface MainMenuProps {
   onStartGame: () => void;
   onOpenSettings: () => void;
   onOpenScoreboard: () => void;
+  onOpenInstructions: () => void;
 }
 
 const MainMenu: React.FC<MainMenuProps> = ({ 
   onStartGame, 
   onOpenSettings, 
-  onOpenScoreboard 
+  onOpenScoreboard,
+  onOpenInstructions
 }) => {
   return (
     <div className="main-menu-container flex flex-col items-center justify-center min-h-[70vh] p-8">
@@ -37,6 +39,13 @@ const MainMenu: React.FC<MainMenuProps> = ({
           onClick={onOpenScoreboard}
         >
           排行榜
+        </button>
+        
+        <button
+          className="py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
+          onClick={onOpenInstructions}
+        >
+          游戏说明
         </button>
       </div>
       
