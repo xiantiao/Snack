@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Direction, GameState, Point, GameStatus, Difficulty, Food, FoodType } from '../types/game';
 
@@ -18,18 +20,21 @@ class SoundManager {
   private enabled: boolean = true;
 
   private constructor() {
-    // 初始化音效
-    this.sounds = {
-      move: new Audio('/sounds/move.mp3'),
-      eat: new Audio('/sounds/eat.mp3'),
-      gameOver: new Audio('/sounds/game_over.mp3')
-    };
-    
-    // 预加载音效
-    Object.values(this.sounds).forEach(audio => {
-      audio.load();
-      audio.volume = 0.5;
-    });
+    // 检查是否在浏览器环境中
+    if (typeof window !== 'undefined') {
+      // 初始化音效
+      this.sounds = {
+        move: new Audio('/sounds/move.mp3'),
+        eat: new Audio('/sounds/eat.mp3'),
+        gameOver: new Audio('/sounds/game_over.mp3')
+      };
+      
+      // 预加载音效
+      Object.values(this.sounds).forEach(audio => {
+        audio.load();
+        audio.volume = 0.5;
+      });
+    }
   }
 
   public static getInstance(): SoundManager {
@@ -44,7 +49,7 @@ class SoundManager {
   }
 
   public play(sound: 'move' | 'eat' | 'gameOver'): void {
-    if (!this.enabled) return;
+    if (!this.enabled || typeof window === 'undefined') return;
     
     const audio = this.sounds[sound];
     if (audio) {
