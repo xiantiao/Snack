@@ -1,0 +1,11 @@
+{
+  "name": "snack-wrapper",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "cd snack && npm run dev",
+    "build": "cd snack && npm run build",
+    "start": "cd snack && npm run start",
+    "lint": "cd snack && npm run lint"
+  }
+} 
